@@ -1,4 +1,8 @@
-# hexplosive
+# Hexplosive C2 Framework
+
+## Disclaimer
+
+The Hexplosive C2 Framework is protected by the intellectual property rights of Temasek Polytechnic, and to be used only for educational purposes.
 
 ## Overview
 

